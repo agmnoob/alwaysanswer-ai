@@ -1,0 +1,36 @@
+# AlwaysAnswer AI — Render deploy config
+# One web service hosts the API + landing page at a single public URL.
+# Deploy: push this repo to GitHub, then New -> Web Service -> connect repo.
+services:
+  - type: web
+    name: alwaysanswer-ai
+    runtime: python
+    plan: free
+    region: oregon        # change if closer to you
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn api_server:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: "10000"
+      # The public URL Render gives you. Set this after first deploy so
+      # Retell webhooks + Stripe success/cancel point at the live site.
+      - key: WEBHOOK_BASE_URL
+        sync: false
+      - key: RETELL_API_KEY
+        sync: false
+      - key: DEMO_AGENT_ID
+        value: agent_bca52ead31040cd2b6b8f7b6c7
+      - key: GOOGLE_CALENDAR_ID
+        value: primary
+      - key: OWNER_EMAIL
+        sync: false
+      - key: CALENDAR_TZ
+        value: America/Los_Angeles
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_PRICE_STARTER
+        sync: false
+      - key: STRIPE_PRICE_GROWTH
+        sync: false

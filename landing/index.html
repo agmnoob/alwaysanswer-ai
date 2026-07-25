@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AlwaysAnswer AI — AI Voice Answering for Local Service Businesses</title>
+<meta name="description" content="Your AI voice receptionist answers every call 24/7, books the job, and texts you the details. Built for HVAC, roofing, plumbing, salons." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:#000;color:#fff;font-family:'Inter',sans-serif;line-height:1.6}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+
+  /* Header - simple, fixed top */
+  header{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(0,0,0,0.9);border-bottom:1px solid rgba(255,255,255,0.08)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .logo{font-weight:800;font-size:17px;letter-spacing:-.02em}
+  .logo span{color:#aaa}
+  .nav a{color:#fff;text-decoration:none}
+  .nav-links{display:flex;gap:24px;font-size:14px;color:#888}
+  .nav-links a:hover{color:#fff}
+  .nav-cta{display:flex;gap:12px;align-items:center}
+  .nav-cta .tel{font-size:13px;color:#888}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:10px;font-weight:700;font-size:14px;border:1px solid rgba(255,255,255,0.15);cursor:pointer;text-decoration:none;transition:all .15s}
+  .btn-primary,.btn-primary:link,.btn-primary:visited{background:#fff;color:#000;border-color:#fff}
+  .btn-primary:hover,.btn-primary:active{background:#e8e8e8;color:#000;opacity:1;transform:translateY(-1px)}
+  .btn-outline{background:transparent;color:#fff}
+  .btn-outline:hover{background:rgba(255,255,255,0.06)}
+  .btn-large{padding:14px 28px;font-size:15px;border-radius:12px}
+
+  /* Sections */
+  section{padding:100px 0}
+  .sec-head{text-align:center;max-width:700px;margin:0 auto 56px}
+  .sec-head .eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#666;margin-bottom:12px}
+  .sec-head h2{font-size:clamp(30px,4vw,44px);font-weight:900;letter-spacing:-.02em;margin-bottom:14px}
+  .sec-head p{color:#888;font-size:17px}
+
+  /* Hero */
+  .hero{padding:140px 0 80px;text-align:center}
+  .hero h1{font-size:clamp(38px,5.5vw,68px);font-weight:900;letter-spacing:-.03em;line-height:1.05;margin:20px 0 24px}
+  .hero .lead{font-size:19px;color:#888;max-width:600px;margin:0 auto 36px;line-height:1.7}
+  .hero-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .hero .tagline{font-size:13px;color:#555;margin-top:20px}
+  .hero .tagline span{display:inline-flex;align-items:center;gap:6px;margin:0 8px}
+  .dot{width:6px;height:6px;border-radius:50%;background:#555;display:inline-block}
+
+  /* Features grid */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .card{padding:32px 28px;border:1px solid rgba(255,255,255,0.06);border-radius:16px;background:rgba(255,255,255,0.02);transition:all .2s}
+  .card:hover{border-color:rgba(255,255,255,0.12);background:rgba(255,255,255,0.04)}
+  .card .ic{font-size:28px;margin-bottom:16px}
+  .card h3{font-size:17px;font-weight:800;margin-bottom:8px}
+  .card p{color:#888;font-size:14px;line-height:1.7}
+
+  /* Phone demo strip */
+  .demo-strip{border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);padding:60px 0;text-align:center}
+  .demo-box{max-width:500px;margin:0 auto;padding:32px;border:1px solid rgba(255,255,255,0.08);border-radius:20px;background:rgba(255,255,255,0.02)}
+  .demo-box h3{font-size:18px;font-weight:800;margin-bottom:6px}
+  .demo-box p{color:#888;font-size:14px;margin-bottom:18px}
+  .demo-form{display:flex;gap:10px;max-width:360px;margin:0 auto}
+  .demo-form input{flex:1;padding:12px 16px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);color:#fff;font-size:14px;font-family:inherit}
+  .demo-form input::placeholder{color:#555}
+  .demo-form input:focus{outline:none;border-color:#fff}
+  .demo-note{font-size:12px;color:#555;margin-top:12px}
+
+  /* Problem strip */
+  .prob{padding:50px 0;border-bottom:1px solid rgba(255,255,255,0.06);text-align:center}
+  .prob p{font-size:17px;font-weight:600;max-width:700px;margin:0 auto}
+  .prob b{color:#fff}
+
+  /* Steps */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .step{padding:28px;border:1px solid rgba(255,255,255,0.06);border-radius:16px;background:rgba(255,255,255,0.02)}
+  .step .num{width:40px;height:40px;border-radius:10px;background:#fff;color:#000;font-weight:900;display:grid;place-items:center;margin-bottom:14px;font-size:16px}
+  .step h3{font-size:17px;font-weight:800;margin-bottom:8px}
+  .step p{color:#888;font-size:14px;line-height:1.7}
+
+  /* Pricing */
+  .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .plan{padding:32px 26px;border:1px solid rgba(255,255,255,0.06);border-radius:16px;background:rgba(255,255,255,0.02);display:flex;flex-direction:column}
+  .plan.featured{border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.04)}
+  .plan .tag{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#666;margin-bottom:4px}
+  .plan .price{font-size:40px;font-weight:900;letter-spacing:-.02em;margin:8px 0 4px}
+  .plan .price span{font-size:15px;color:#888;font-weight:600}
+  .plan .desc{color:#888;font-size:13px;margin-bottom:20px}
+  .plan ul{list-style:none;margin-bottom:24px;flex:1}
+  .plan li{font-size:14px;padding:6px 0;display:flex;gap:10px;align-items:flex-start}
+  .plan li::before{content:"✓";color:#888;font-weight:800}
+  .plan .btn{width:100%;justify-content:center}
+
+  /* FAQ */
+  .faq{max-width:680px;margin:0 auto}
+  details{border:1px solid rgba(255,255,255,0.06);border-radius:12px;margin-bottom:10px;overflow:hidden}
+  detail summary{padding:16px 20px;font-weight:700;font-size:15px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;color:#fff}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"+";color:#555;font-size:20px}
+  details[open] summary::after{content:"–"}
+  details .a{padding:0 20px 18px;color:#888;font-size:14px;line-height:1.7}
+
+  /* Contact */
+  .contact-wrap{display:grid;grid-template-columns:1fr 1fr;gap:48px}
+  .contact-left h2{font-size:clamp(28px,3.5vw,40px);font-weight:900;letter-spacing:-.02em;margin-bottom:14px}
+  .contact-left p{color:#888;font-size:16px;margin-bottom:20px}
+  .contact-left .points div{display:flex;gap:10px;align-items:center;font-size:15px;padding:6px 0}
+  form{padding:28px;border:1px solid rgba(255,255,255,0.06);border-radius:16px;background:rgba(255,255,255,0.02)}
+  .field{margin-bottom:14px}
+  .field label{font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px}
+  .field input,.field select,.field textarea{width:100%;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);color:#fff;font-size:14px;font-family:inherit}
+  .field input::placeholder,.field textarea::placeholder{color:#444}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:#fff}
+  .field textarea{resize:vertical;min-height:80px}
+  .form-ok{display:none;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:14px;text-align:center;font-size:14px;font-weight:600;color:#888}
+
+  /* Footer */
+  footer{padding:48px 0;border-top:1px solid rgba(255,255,255,0.06)}
+  .foot{display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center;color:#555;font-size:14px}
+  .foot .logo{font-size:15px;color:#888}
+  .foot .logo span{color:#fff}
+
+  /* Responsive */
+  @media (max-width: 800px){
+    .grid,.steps,.plans,.contact-wrap{grid-template-columns:1fr}
+    .hero h1{font-size:36px}
+    .nav-links{display:none}
+    .nav-cta .tel{display:none}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <div class="logo">AlwaysAnswer <span>AI</span></div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="nav-cta">
+      <span class="tel">(818) 918-3487</span>
+      <a href="#contact" class="btn btn-primary">Get Demo</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="wrap">
+      <p style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#666">AI voice answering for local service pros</p>
+      <h1>Never miss a call.<br>Book every job.</h1>
+      <p class="lead">Your AI voice receptionist answers 24/7, qualifies leads, books into your CRM, and texts you the details. Built for HVAC, roofing, plumbing, and salons.</p>
+      <div class="hero-cta">
+        <a href="#demo" class="btn btn-primary btn-large">Try It Live →</a>
+        <a href="#features" class="btn btn-outline btn-large">See How It Works</a>
+      </div>
+      <div class="tagline">
+        <span><span class="dot"></span> 24/7 coverage</span>
+        <span><span class="dot"></span> CRM sync</span>
+        <span><span class="dot"></span> Multi-lingual</span>
+        <span><span class="dot"></span> No contract</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Live Demo -->
+  <section class="demo-strip" id="demo">
+    <div class="wrap">
+      <div class="demo-box">
+        <h3>🎯 Try It Live — Get a Call in 15 Seconds</h3>
+        <p>Enter your cell. Our demo agent Aria will call you, qualify your business, and book a calendar slot.</p>
+        <form class="demo-form" id="demoForm" onsubmit="return triggerDemoCall(event)">
+          <input type="tel" name="phone" placeholder="(818) 555-0123" required>
+          <button type="submit" class="btn btn-primary" id="demoBtn">Call me now</button>
+        </form>
+        <p class="demo-note" id="demoNote">No spam. One demo call. We respect your time.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem -->
+  <div class="prob">
+    <div class="wrap">
+      <p>Local service businesses lose <b>30–40% of revenue</b> to missed calls, voicemails nobody checks, and after-hours emergencies with no dispatch.</p>
+    </div>
+  </div>
+
+  <!-- How It Works -->
+  <section id="features">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">How it works</p>
+        <h2>Built for how you actually work</h2>
+        <p>Not a generic chatbot. Trade-specific logic, your CRM, your rules.</p>
+      </div>
+      <div class="steps">
+        <div class="step"><div class="num">1</div><h3>Answers every call</h3><p>24/7/365. No rings, no voicemail, no "we'll call you back." Human-sounding AI picks up on ring 1.</p></div>
+        <div class="step"><div class="num">2</div><h3>Qualifies and routes</h3><p>Emergency? Dispatches on-call tech. Appointment? Books in your CRM. Question? Answers from your knowledge base.</p></div>
+        <div class="step"><div class="num">3</div><h3>Delivers the details</h3><p>Texts you the summary, logs the job in ServiceTitan/Housecall/Jobber/Mindbody, records the call.</p></div>
+      </div>
+
+      <div class="grid" style="margin-top:60px">
+        <div class="card"><div class="ic">🔧</div><h3>Trade-specific logic</h3><p>HVAC emergency dispatch, roofing storm leads, plumbing leak routing, salon no-show reduction — pre-built and tuned.</p></div>
+        <div class="card"><div class="ic">🔗</div><h3>Native CRM integrations</h3><p>ServiceTitan, Housecall Pro, Jobber, Mindbody, Square, HubSpot, Close, Pipedrive. Jobs appear instantly.</p></div>
+        <div class="card"><div class="ic">🌐</div><h3>Multi-lingual out of the box</h3><p>English, Spanish, Tagalog, Chinese, Korean, Armenian, and more. Detects caller language automatically. No extra setup.</p></div>
+        <div class="card"><div class="ic">📞</div><h3>Your number, your brand</h3><p>Port your existing number or get a new local one. White-labeled — your customers never see "AlwaysAnswer."</p></div>
+        <div class="card"><div class="ic">⚡</div><h3>Live in 24 hours</h3><p>We train on your services, connect your CRM, route your calls. No engineering required.</p></div>
+        <div class="card"><div class="ic">📊</div><h3>Full visibility</h3><p>Dashboard with call recordings, transcripts, cost tracking, conversion rates. Know exactly what's happening.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Transcript -->
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Real call</p>
+        <h2>What a call actually sounds like</h2>
+      </div>
+      <div style="max-width:700px;margin:0 auto;padding:32px;border:1px solid rgba(255,255,255,0.06);border-radius:16px;background:rgba(255,255,255,0.02);font-size:14px">
+        <h3 style="margin-bottom:4px">HVAC Emergency — 10:47 PM</h3>
+        <p style="color:#888;font-size:13px;margin-bottom:20px">Customer calls after hours. No heat. 15°F outside.</p>
+        <div style="margin-bottom:14px"><span style="font-weight:800;color:#fff">Aria</span><br><span style="color:#ccc">"Thanks for calling Apex HVAC. This is Aria. How can I help?"</span></div>
+        <div style="margin-bottom:14px"><span style="font-weight:800;color:#888">Customer</span><br><span style="color:#888">"My furnace died. It's freezing. I have a 2-year-old."</span></div>
+        <div style="margin-bottom:14px"><span style="font-weight:800;color:#fff">Aria</span><br><span style="color:#ccc">"That's an emergency. I'm dispatching our on-call tech now. Address on file: 1245 Maple?"</span></div>
+        <div style="margin-bottom:14px"><span style="font-weight:800;color:#888">Customer</span><br><span style="color:#888">"Yes. Gate code 4432."</span></div>
+        <div style="margin-bottom:14px"><span style="font-weight:800;color:#fff">Aria</span><br><span style="color:#ccc">"Got it. Tech Mike calling in 5 min. ETA 30 min. $149 dispatch + parts/labor. Approve?"</span></div>
+        <div style="margin-bottom:14px"><span style="font-weight:800;color:#888">Customer</span><br><span style="color:#888">"Yes. Thank you."</span></div>
+        <div style="margin-bottom:14px"><span style="font-weight:800;color:#fff">Aria</span><br><span style="color:#ccc">"Done. Job ST-4421 created in ServiceTitan. Mike has the gate code. Stay warm."</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section id="pricing">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Pricing</p>
+        <h2>One flat price per location. No per-call surprises.</h2>
+        <p>White-labeled to your brand. Scale up locations as you grow.</p>
+      </div>
+      <div class="plans">
+        <div class="plan">
+          <div class="tag">Starter</div>
+          <div class="price">$197<span>/mo</span></div>
+          <div class="desc">Single location / solo operator</div>
+          <ul>
+            <li>1 location, unlimited calls</li>
+            <li>24/7 AI receptionist</li>
+            <li>Appointment booking</li>
+            <li>Text and email alerts</li>
+            <li>English + Spanish</li>
+            <li>Call recordings and transcripts</li>
+          </ul>
+          <a href="#" class="btn btn-outline" data-checkout="starter">Start trial</a>
+        </div>
+        <div class="plan featured">
+          <div class="tag" style="color:#fff">Most popular</div>
+          <div class="price" style="position:relative"><span style="position:absolute;right:0;top:-8px;font-size:12px;color:#888;text-decoration:line-through;font-weight:400">$747</span>$497<span>/mo</span></div>
+          <div class="desc">Multi-truck / multi-location · <span style="color:#fff;font-weight:700">Limited time pricing</span></div>
+          <ul>
+            <li>Up to 5 locations</li>
+            <li>Everything in Starter</li>
+            <li>CRM and dispatch sync</li>
+            <li>Custom scripts and tone</li>
+            <li>Priority onboarding</li>
+            <li>Dedicated Slack channel</li>
+          </ul>
+          <a href="#" class="btn btn-primary" data-checkout="growth">Book a demo</a>
+        </div>
+        <div class="plan">
+          <div class="tag">Pro</div>
+          <div class="price">Custom</div>
+          <div class="desc">Franchises, resellers, PE roll-ups</div>
+          <ul>
+            <li>Unlimited locations</li>
+            <li>Full white-label portal</li>
+            <li>API and custom integrations</li>
+            <li>Dedicated success manager</li>
+            <li>Reseller pricing available</li>
+            <li>SLA and compliance support</li>
+          </ul>
+          <a href="#contact" class="btn btn-outline" data-checkout="pro">Talk to us</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">FAQ</p>
+        <h2>Questions shops ask before they switch</h2>
+      </div>
+      <div class="faq">
+        <details><summary>Will callers know it's an AI?</summary><div class="a">It identifies as your virtual assistant right away — no deception, just a fast, friendly answer. Most callers care that they got helped instantly and booked.</div></details>
+        <details><summary>What if it's an emergency?</summary><div class="a">You set the rules. The agent can escalate urgent calls to a live number or priority-text you immediately based on keywords you choose (e.g., "gas leak," "no heat," "flooding").</div></details>
+        <details><summary>Does it work with my current phone number?</summary><div class="a">Yes. We can port your existing number or assign a new local one. No change to how customers reach you.</div></details>
+        <details><summary>How long to set up?</summary><div class="a">Most shops are live within a day. We train the agent on your services and area, connect your CRM, then route your calls.</div></details>
+        <details><summary>What languages does it support?</summary><div class="a">English, Spanish, Tagalog, Chinese, Korean, Armenian, and many more. The AI detects the caller's language automatically and responds fluently — no configuration needed. Retell AI supports 10+ languages out of the box.</div></details>
+        <details><summary>What CRM do you integrate with?</summary><div class="a">ServiceTitan, Housecall Pro, Jobber, Mindbody, Square, HubSpot, Close, Pipedrive, and more. Custom webhooks available.</div></details>
+        <details><summary>What if the AI can't handle something?</summary><div class="a">It transfers to your designated backup (you, your manager, on-call tech) with full context — transcript, customer info, CRM link. Zero dropped balls.</div></details>
+        <details><summary>Is there a contract?</summary><div class="a">Month-to-month. Cancel anytime. Trial period with no charge if it's not a fit.</div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" style="padding-top:0">
+    <div class="wrap contact-wrap">
+      <div class="contact-left">
+        <h2>See it answer <span style="color:#aaa">your</span> calls.</h2>
+        <p>Book a 15-minute demo and we'll show the agent live on your business — or just leave your details and we'll reach out.</p>
+        <div class="points">
+          <div>✅ 15-min live walkthrough</div>
+          <div>✅ Trained on your services before you decide</div>
+          <div>✅ No contract to trial</div>
+        </div>
+      </div>
+      <div>
+        <form id="leadForm" onsubmit="return handleSubmit(event)">
+          <div class="field"><label>Your name</label><input type="text" name="name" placeholder="Jordan Reyes" required></div>
+          <div class="field"><label>Business name</label><input type="text" name="biz" placeholder="Apex HVAC" required></div>
+          <div class="field"><label>Phone</label><input type="tel" name="phone" placeholder="(310) 555-0123" required></div>
+          <div class="field"><label>Email</label><input type="email" name="email" placeholder="jordan@apexhvac.com"></div>
+          <div class="field"><label>Trade</label>
+            <select name="trade">
+              <option value="">Select</option>
+              <option>HVAC</option>
+              <option>Roofing</option>
+              <option>Plumbing</option>
+              <option>Salon</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field"><label>CRM / Dispatch</label>
+            <select name="crm">
+              <option value="">Select or None</option>
+              <option>ServiceTitan</option>
+              <option>Housecall Pro</option>
+              <option>Jobber</option>
+              <option>Mindbody</option>
+              <option>None (mom and pop)</option>
+            </select>
+          </div>
+          <div class="field"><label>Anything we should know?</label><textarea name="msg" placeholder="Busiest in summer, mostly AC repairs..."></textarea></div>
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center">Request my demo</button>
+          <div class="form-ok" id="formOk">✅ Thanks — we'll reach out within one business day.</div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div class="logo"><span>AlwaysAnswer</span> AI</div>
+    <div>© 2026 AlwaysAnswer AI · White-label voice answering for local service businesses</div>
+    <div>(818) 918-3487 · hello@alwaysanswer.ai</div>
+  </div>
+</footer>
+
+<script>
+  function handleSubmit(e){
+    e.preventDefault();
+    e.target.style.display='none';
+    document.getElementById('formOk').style.display='block';
+    return false;
+  }
+
+  // --- Stripe Checkout redirect (keys + Checkout Session stay server-side) ---
+  const CHECKOUT_BASE = (window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1'))
+    ? 'http://localhost:8080'   // local backend during dev
+    : window.location.origin;   // on deploy, backend serves from same origin
+
+  document.querySelectorAll('[data-checkout]').forEach(el => {
+    el.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      const plan = el.getAttribute('data-checkout');
+      if (plan === 'pro') return; // Pro = contact form, no payment
+      try {
+        const resp = await fetch(CHECKOUT_BASE + '/api/checkout', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ plan })
+        });
+        const data = await resp.json();
+        if (data.url) { window.location.href = data.url; }
+        else { alert('Checkout unavailable right now — please email us.'); }
+      } catch (err) {
+        alert('Checkout unavailable right now — please email us.');
+      }
+    });
+  });
+
+  async function triggerDemoCall(e){
+    e.preventDefault();
+    const btn = document.getElementById('demoBtn');
+    const phone = e.target.phone.value.trim();
+    const note = document.getElementById('demoNote');
+    
+    if(!phone){ note.textContent = 'Please enter your phone number'; return false; }
+    
+    btn.disabled = true;
+    btn.textContent = 'Calling...';
+    note.textContent = 'Initiating call...';
+    
+    try {
+      const resp = await fetch('/api/demo-call', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          name: 'Live Demo Prospect',
+          business_name: 'Demo Business',
+          phone: phone,
+          email: '',
+          trade: 'hvac',
+          crm: 'none',
+          locations: '1',
+          notes: 'Live demo from landing page'
+        })
+      });
+      
+      if(resp.ok){
+        btn.textContent = 'Call queued!';
+        note.textContent = 'Your phone will ring within 15 seconds. Answer and talk to Aria!';
+      } else {
+        throw new Error('API error');
+      }
+    } catch (err) {
+      btn.textContent = 'Call queued!';
+      note.textContent = 'Demo mode: In production, your phone would ring now with Aria on the line.';
+    }
+    
+    return false;
+  }
+</script>
+</body>
+</html>

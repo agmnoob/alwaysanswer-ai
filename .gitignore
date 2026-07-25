@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Secrets — NEVER commit
+.env
+*.json.key
+credentials.json
+service_account.json
+token.json
+
+# Local / OS
+.DS_Store
+*.log
+
+# Local only
+start_api.sh
