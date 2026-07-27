@@ -26,6 +26,8 @@ services:
         value: primary
       - key: OWNER_EMAIL
         sync: false
+      - key: GOOGLE_TOKEN_B64
+        sync: false
       - key: CALENDAR_TZ
         value: America/Los_Angeles
       - key: STRIPE_SECRET_KEY

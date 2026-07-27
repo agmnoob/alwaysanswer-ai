@@ -265,12 +265,20 @@ app.add_middleware(
 
 @app.get("/health")
 async def health_check():
+    cal_ok = False
+    if calendar_sync is not None:
+        try:
+            cal_ok = calendar_sync.is_configured()
+        except Exception:
+            cal_ok = False
     return {
         "status": "healthy",
         "timestamp": datetime.utcnow().isoformat() + "Z",
         "version": "1.0.0",
         "retell_configured": bool(RETELL_API_KEY),
         "demo_agent_id": DEMO_AGENT_ID or "not_set",
+        "calendar_configured": cal_ok,
+        "webhook_base_url": WEBHOOK_BASE_URL or "",
     }
 
 @app.post("/api/demo-call", response_model=DemoCallResponse)
