@@ -46,7 +46,12 @@ logger = logging.getLogger("api-server")
 
 RETELL_API_KEY = os.getenv("RETELL_API_KEY", "key_a2bc4c162c9b896515c2733dab2d")
 DEMO_AGENT_ID = os.getenv("DEMO_AGENT_ID", "agent_bca52ead31040cd2b6b8f7b6c7")  # Aria demo agent
-WEBHOOK_BASE_URL = os.getenv("WEBHOOK_BASE_URL", "http://localhost:8080")
+# Public base URL for Retell webhooks / Stripe callbacks.
+# Prefer explicit WEBHOOK_BASE_URL; fall back to Render's injected external URL;
+# then localhost for local dev. This means on Render the var is auto-set.
+WEBHOOK_BASE_URL = os.getenv("WEBHOOK_BASE_URL") or os.getenv(
+    "RENDER_EXTERNAL_URL", "http://localhost:8080"
+)
 
 # Booking link Aria sends prospects. Default = Google Calendar appointment-schedule page
 # (Google's free built-in Cal.com equivalent). Create one at calendar.google.com -> "Appointments"
