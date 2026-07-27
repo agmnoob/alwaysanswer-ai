@@ -23,6 +23,7 @@ Env (in .env):
 """
 
 import os
+import base64
 import datetime as dt
 import logging
 from typing import List, Dict, Any, Optional
@@ -62,6 +63,27 @@ def _service_creds():
     )
 
 
+def _bootstrap_token():
+    """On first run (e.g. on Render), seed token.json from GOOGLE_TOKEN_B64 env var.
+
+    The OAuth token is gitignored (secret). On a host without the file, an
+    operator base64-encodes token.json once and sets it as an encrypted env var;
+    we write it back to disk so the rest of the module works unchanged.
+    """
+    if os.path.exists(TOKEN_PATH):
+        return
+    b64 = os.getenv("GOOGLE_TOKEN_B64", "")
+    if not b64:
+        return
+    try:
+        raw = base64.b64decode(b64)
+        with open(TOKEN_PATH, "w") as f:
+            f.write(raw.decode())
+        logger.info("Seeded token.json from GOOGLE_TOKEN_B64 env var")
+    except Exception as e:
+        logger.warning(f"Failed to seed token.json from env: {e}")
+
+
 def _oauth_creds():
     """Return OAuth Credentials from the stored token, refreshing if expired.
 
@@ -69,6 +91,7 @@ def _oauth_creds():
     refresh_token. Refreshing transparently removes the ~7-day wall — refresh
     tokens do not expire unless explicitly revoked.
     """
+    _bootstrap_token()
     if not os.path.exists(TOKEN_PATH):
         return None
     creds = Credentials.from_authorized_user_file(TOKEN_PATH, SCOPES)
