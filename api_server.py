@@ -77,6 +77,38 @@ STRIPE_CANCEL_URL = os.getenv("STRIPE_CANCEL_URL", f"{WEBHOOK_BASE_URL}/#pricing
 if stripe and STRIPE_SECRET_KEY:
     stripe.api_key = STRIPE_SECRET_KEY
 
+# --- Twilio SMS (real confirmation texts) ---
+TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID", "")
+TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN", "")
+TWILIO_PHONE_NUMBER = os.getenv("TWILIO_PHONE_NUMBER", "")
+
+_sms_client = None
+if TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN:
+    try:
+        from twilio.rest import Client as _TwilioClient
+        _sms_client = _TwilioClient(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+    except Exception as e:
+        logger.warning(f"Twilio client init failed: {e}")
+
+
+def send_sms(to: str, body: str) -> bool:
+    """Send a real SMS via Twilio. Returns True on success. Safe no-op if unconfigured."""
+    if _sms_client is None or not TWILIO_PHONE_NUMBER:
+        logger.warning("SMS not configured — skipping send_sms")
+        return False
+    try:
+        _sms_client.messages.create(
+            to=normalize_phone(to),
+            from_=TWILIO_PHONE_NUMBER,
+            body=body,
+        )
+        logger.info(f"SMS sent to {normalize_phone(to)}")
+        return True
+    except Exception as e:
+        logger.error(f"SMS send failed: {e}")
+        return False
+
+
 # In-memory store for demo calls (replace with Redis/DB in production)
 demo_calls: Dict[str, Dict[str, Any]] = {}
 
@@ -386,9 +418,20 @@ async def tool_check_availability(request: CheckAvailabilityToolRequest, request
         slots = calendar_sync.get_next_available_slots(
             days_ahead=request.days_ahead, max_slots=request.max_slots
         )
+        configured = calendar_sync.is_configured()
+        if not configured:
+            # Don't hand Aria fake slots — tell her the calendar is down so she
+            # can tell the prospect honestly instead of inventing a date.
+            return {
+                "status": "unavailable",
+                "configured": False,
+                "slots": [],
+                "message": "Owner calendar is temporarily unavailable. Tell the prospect you'll "
+                           "follow up with available times by text shortly.",
+            }
         return {
             "status": "ok",
-            "configured": calendar_sync.is_configured(),
+            "configured": True,
             "slots": slots,
             "message": "Here are the owner's next available demo times.",
         }
@@ -427,6 +470,12 @@ async def tool_book_appointment(request: BookAppointmentToolRequest, request_obj
                 f"Perfect — you're booked for {request.datetime_slot}. "
                 f"I've put it on the calendar and sent you an invite."
             )
+            # Real SMS confirmation to the prospect
+            sms_body = (
+                f"AlwaysAnswer AI demo confirmed: {request.datetime_slot}. "
+                f"Calendar invite sent. Questions? Reply here or call (818) 918-3487."
+            )
+            send_sms(request.phone, sms_body)
         except Exception as e:
             logger.error(f"book_demo_event failed: {e}")
             entry["status"] = "recorded_local_only"
@@ -463,6 +512,13 @@ async def tool_send_callback(request: SendCallbackToolRequest, request_obj: Requ
     }
     tool_leads[f"cb_{datetime.utcnow().timestamp()}"] = entry
     logger.info(f"CALLBACK requested via tool: {request.prospect_name} ({request.business_name})")
+
+    # Real SMS confirmation that a callback is queued
+    send_sms(
+        request.phone,
+        f"AlwaysAnswer AI: Thanks {request.prospect_name.split()[0] if request.prospect_name else ''}! "
+        f"A team member will call you back shortly about your {request.business_name} demo.",
+    )
 
     # TODO: route to a live rep queue / CRM task
     return {
