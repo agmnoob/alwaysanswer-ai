@@ -25,6 +25,7 @@ Env (in .env):
 import os
 import base64
 import json
+import re
 import datetime as dt
 import logging
 from typing import List, Dict, Any, Optional
@@ -82,8 +83,11 @@ def _bootstrap_token():
     b64 = os.getenv("GOOGLE_TOKEN_B64", "")
     if not b64:
         return
-    # Strip ALL whitespace — copied long strings often pick up line breaks.
-    b64 = "".join(b64.split())
+    # Strip ALL whitespace/non-base64 chars — copied long strings pick up breaks;
+    # also defends against Render trimming/transform quirks on very long values.
+    b64 = re.sub(r"[^A-Za-z0-9+/=]", "", b64)
+    # Fix padding so a trailing newline / 1-char truncation doesn't break decode.
+    b64 += "=" * (-len(b64) % 4)
     try:
         raw = base64.b64decode(b64)
         text = raw.decode()
@@ -95,7 +99,7 @@ def _bootstrap_token():
             f.write(text)
         logger.info("Seeded token.json from GOOGLE_TOKEN_B64 env var")
     except Exception as e:
-        calendar_bootstrap_error = f"token seed failed: {e}"
+        calendar_bootstrap_error = f"token seed failed: {e} (env len={len(b64)})"
         logger.warning(calendar_bootstrap_error)
 
 
