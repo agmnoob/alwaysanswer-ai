@@ -24,6 +24,7 @@ Env (in .env):
 
 import os
 import base64
+import json
 import datetime as dt
 import logging
 from typing import List, Dict, Any, Optional
@@ -63,6 +64,10 @@ def _service_creds():
     )
 
 
+# Set by _bootstrap_token() so /health can report why calendar isn't wired.
+calendar_bootstrap_error: str = ""
+
+
 def _bootstrap_token():
     """On first run (e.g. on Render), seed token.json from GOOGLE_TOKEN_B64 env var.
 
@@ -70,18 +75,28 @@ def _bootstrap_token():
     operator base64-encodes token.json once and sets it as an encrypted env var;
     we write it back to disk so the rest of the module works unchanged.
     """
+    global calendar_bootstrap_error
+    calendar_bootstrap_error = ""
     if os.path.exists(TOKEN_PATH):
         return
     b64 = os.getenv("GOOGLE_TOKEN_B64", "")
     if not b64:
         return
+    # Strip ALL whitespace — copied long strings often pick up line breaks.
+    b64 = "".join(b64.split())
     try:
         raw = base64.b64decode(b64)
+        text = raw.decode()
+        # Validate it's actually our token JSON before writing.
+        parsed = json.loads(text)
+        if "refresh_token" not in parsed:
+            raise ValueError("decoded JSON missing refresh_token")
         with open(TOKEN_PATH, "w") as f:
-            f.write(raw.decode())
+            f.write(text)
         logger.info("Seeded token.json from GOOGLE_TOKEN_B64 env var")
     except Exception as e:
-        logger.warning(f"Failed to seed token.json from env: {e}")
+        calendar_bootstrap_error = f"token seed failed: {e}"
+        logger.warning(calendar_bootstrap_error)
 
 
 def _oauth_creds():

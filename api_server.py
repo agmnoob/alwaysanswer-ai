@@ -271,9 +271,11 @@ app.add_middleware(
 @app.get("/health")
 async def health_check():
     cal_ok = False
+    cal_err = ""
     if calendar_sync is not None:
         try:
             cal_ok = calendar_sync.is_configured()
+            cal_err = getattr(calendar_sync, "calendar_bootstrap_error", "")
         except Exception:
             cal_ok = False
     return {
@@ -283,6 +285,7 @@ async def health_check():
         "retell_configured": bool(RETELL_API_KEY),
         "demo_agent_id": DEMO_AGENT_ID or "not_set",
         "calendar_configured": cal_ok,
+        "calendar_error": cal_err,
         "webhook_base_url": WEBHOOK_BASE_URL or "",
     }
 
